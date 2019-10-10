@@ -1,6 +1,4 @@
 #include <iostream>
-#include <iostream>
-#include <iostream>
 using namespace std;
 
 class Block;
@@ -61,6 +59,7 @@ int main(){
         if(type == "End") break;
         cin >> col;
         M.one_block(type, col-1);
+        M.cancel();
         if(M.is_end()) break;
         M.show_matrix();
     }
@@ -88,6 +87,39 @@ void Matrix::one_block(string type, int col){
         write(1);
     }
     delete B;
+}
+
+void Matrix::show_matrix(){
+    for(int i = 4; i < rows + 4; i++){
+        for(int j = 0; j < cols; j++){
+            cout << matrix[i][j] ;
+        }
+        cout << endl;
+    }
+}
+
+void Matrix::cancel(){
+    bool cancel, final_check;
+    int line;
+    do{
+        final_check = true;
+        for(int i = rows + 3; i > 3; i--){
+            cancel = true;
+            for(int j = 0; j < cols; j++){
+                if(matrix[i][j] == false){
+                    cancel = false;
+                }
+            }
+            if(cancel == true){
+                final_check = false;
+                for(int i2 = i; i2 > 0; i2--){
+                    for(int j2 = 0; j2 < cols; j2++){
+                        matrix[i2][j2] = matrix[i2-1][j2];
+                    }
+                }
+            }
+        }
+    }while(!final_check);
 }
 
 
