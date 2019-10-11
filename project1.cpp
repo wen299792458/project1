@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 class Block;
@@ -29,7 +30,7 @@ class Matrix{
     }
     bool is_end();
     void one_block(string type, int col);
-    void show_matrix();
+    void show_matrix(ofstream& output);
     void cancel();
     void write(bool write_or_wipe);
     bool check_stop();
@@ -45,33 +46,37 @@ struct Block{
     }
 };
 
-
 int main(){
-    //istream input("1.in", ios::in);
-    //ostream output("1.out", ios::out);
+    ifstream input("Tetris.data", ios::in);
+    ofstream output("Tetris.output", ios::out);
+    if(input.eof()) cout << "input error" << endl;
+    else if(output.eof()) cout << "output error" << endl;
+    else cout << "success" << endl;
+
     string type;
     int rows, cols, col;
-    cin >> rows;
-    cin >> cols;
+    input >> rows;
+    input >> cols;
     Matrix M(rows, cols);
     while(true){
-        cin >> type;
+        input >> type;
         if(type == "End") break;
-        cin >> col;
+        input >> col;
         M.one_block(type, col-1);
         M.cancel();
         if(M.is_end()) break;
-        M.show_matrix();
+      //  M.show_matrix();
     }
-    cout << endl << endl << "Now is end" << endl;
-    M.show_matrix();
+    //cout << endl << endl << "Now is end" << endl;
+    M.show_matrix(output);
+    input.close();
+    output.close();
 }
 
 bool Matrix::is_end(){
     for(int i = 0; i < 4; i++){
         for(int j = 0; j < cols; j++){
             if (matrix[i][j] == true){
-                cout<<"now is end";
                 return true;
             }
         }
@@ -89,12 +94,12 @@ void Matrix::one_block(string type, int col){
     delete B;
 }
 
-void Matrix::show_matrix(){
+void Matrix::show_matrix(ofstream& output){
     for(int i = 4; i < rows + 4; i++){
         for(int j = 0; j < cols; j++){
-            cout << matrix[i][j] ;
+            output << matrix[i][j] ;
         }
-        cout << endl;
+        output << endl;
     }
 }
 
@@ -249,7 +254,7 @@ bool Matrix::check_stop(){
     if( B->type == "T1" && (matrix[B->row][B->col] == true || matrix[B->row+1][B->col] == true || matrix[B->row][B->col+2] == true)){
         return true;
     }
-    else if( B->type == "T2" && (matrix[B->row][B->col] == true || matrix[B->row+1][B->col] == true)){
+    else if( B->type == "T2" && (matrix[B->row][B->col] == true || matrix[B->row+1][B->col+1] == true)){
         return true;
     }
     else if( B->type == "T3" && (matrix[B->row+1][B->col] == true || matrix[B->row+1][B->col+1] == true || matrix[B->row+1][B->col+2] == true)){
@@ -285,7 +290,7 @@ bool Matrix::check_stop(){
     else if( B->type == "S1" && (matrix[B->row+1][B->col] == true || matrix[B->row+1][B->col+1] == true || matrix[B->row][B->col+2] == true)){
         return true;
     }
-    else if( B->type == "S2" && (matrix[B->row][B->col] == true || matrix[B->row+1][B->col] == true)){
+    else if( B->type == "S2" && (matrix[B->row][B->col] == true || matrix[B->row+1][B->col+1] == true)){
         return true;
     }
     else if( B->type == "Z1" && (matrix[B->row][B->col] == true || matrix[B->row+1][B->col+1] == true || matrix[B->row+1][B->col+2] == true)){
